@@ -11,15 +11,16 @@ class Board extends Component {
       gameStarted: false,
       playerImageNames: ["car", "dog", "hat", "iron", "ship", "shoe", "thimble", "wheelbarrow"],
       players: [], // { id: 1, icon: "car", name: "Peter", wallet: [500,100,20,20,10,10,5,5,1,1] }
-      spaces: this.initializeSpaces(),
       turns: [], // { playerId: 1, diceRoll: 4, spaceId: 8, transactionIds: [12, 13] }
-      transactions: [],
+      transactions: [], // { sellerId: 3, buyerId: 2, spaceId: 2, amount: 100 };
       lastDiceRoll: null,
       currentPlayerId: null,
     };
     this.addPlayer = this.addPlayer.bind(this);
     this.startGame = this.startGame.bind(this);
     this.rollDice  = this.rollDice.bind(this);
+    this.currentPlayer = this.currentPlayer.bind(this);
+    this.buyProperty = this.buyProperty.bind(this);
   }
 
   // bypasses the game_setup for now
@@ -32,24 +33,15 @@ class Board extends Component {
     this.startGame();
   }
 
-  // id, name, type, propertyGroup, price, ownerPlayerId, playerIds
-  initializeSpaces() {
-    return([
-      {id: 1, name: "Go", type: "go", propertyGroup: null, price: null, ownerPlayerId: null, playerIds: []},
-      {id: 2, name: "Mediterranean Avenue", type: "property", propertyGroup: "purple", price: 60, ownerPlayerId: null, playerIds: []},
-      {id: 3, name: "Community Chest", type: "communityChest", propertyGroup: null, price: null, ownerPlayerId: null, playerIds: []},
-      {id: 4, name: "Baltic Avenue", type: "property", propertyGroup: "purple", price: 60, ownerPlayerId: null, playerIds: []},
-      {id: 5, name: "Income Tax", type: "incomeTax", propertyGroup: null, price: null, ownerPlayerId: null, playerIds: []},
-      {id: 6, name: "Reading Railroad", type: "property", propertyGroup: "railroad", price: 200, ownerPlayerId: null, playerIds: []},
-      {id: 7, name: "Oriental Avenue", type: "property", propertyGroup: "lightblue", price: 100, ownerPlayerId: null, playerIds: []},
-      {id: 8, name: "Chance", type: "chance", propertyGroup: null, price: null, ownerPlayerId: null, playerIds: []},
-      {id: 9, name: "Vermont Avenue", type: "property", propertyGroup: "lightblue", price: 100, ownerPlayerId: null, playerIds: []},
-      {id: 10, name: "Connecticut Avenue", type: "property", propertyGroup: "lightblue", price: 120, ownerPlayerId: null, playerIds: []},
-    ]);
-  }
-
   initialPlayerWallet() {
     return [500,500,100,100,50,50,20,20,20,20,20,20,10,10,10,10,10,5,5,5,5,5,1,1,1,1,1];
+  }
+
+  buyProperty(spaceId, price) {
+    let transactions = this.state.transactions;
+    const newTransaction = { sellerId: null, buyerId: this.state.currentPlayerId, spaceId: spaceId, amount: price };
+    transactions.push(newTransaction);
+    this.setState({transactions: transactions});
   }
 
   addPlayer(id, icon, playerName) {
@@ -110,21 +102,24 @@ class Board extends Component {
           addPlayer={this.addPlayer}
         />
         <div className={this.state.gameStarted ? '' : 'hide'}>
+          <h2>Board</h2>
           <div className="spaces-container">
-            <Space id={1} name="Pass Go!" type="go" players={this.state.players} />
-            <Space id={2} name="Mediterranean Avenue" type="property" propertyGroup="purple" price={60} players={this.state.players} />
-            <Space id={3} name="Community Chest" type="communityChest" players={this.state.players} />
-            <Space id={4} name="Baltic Avenue" type="property" propertyGroup="purple" price={60} players={this.state.players} />
-            <Space id={5} name="Income Tax" type="incomeTax" players={this.state.players} />
-            <Space id={6} name="Reading Railroad" type="property" propertyGroup="railroad" price={200} players={this.state.players} />
-            <Space id={7} name="Oriental Avenue" type="property" propertyGroup="lightblue" price={100} players={this.state.players} />
-            <Space id={8} name="Chance" type="chance" players={this.state.players} />
-            <Space id={9} name="Vermont Avenue" type="property" propertyGroup="lightblue" price={100} players={this.state.players} />
-            <Space id={10} name="Connecticut Avenue" type="property" propertyGroup="lightblue" price={120} players={this.state.players} />
+            <Space id={10} name="Connecticut Avenue" type="property" propertyGroup="lightblue" price={120} players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={9} name="Vermont Avenue" type="property" propertyGroup="lightblue" price={100} players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={8} name="Chance" type="chance" players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={7} name="Oriental Avenue" type="property" propertyGroup="lightblue" price={100} players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={6} name="Reading Railroad" type="property" propertyGroup="railroad" price={200} players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={5} name="Income Tax" type="incomeTax" players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={4} name="Baltic Avenue" type="property" propertyGroup="purple" price={60} players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={3} name="Community Chest" type="communityChest" players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={2} name="Mediterranean Avenue" type="property" propertyGroup="purple" price={60} players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={1} name="Pass Go!" type="go" players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
           </div>
+          <h2>Players</h2>
           <div className="player-info-container">
             {this.state.players.map((player) => <PlayerInfo
-                                                  isCurrentPlayer={this.state.currentPlayerId == player.id}
+                                                  key={player.id}
+                                                  isCurrentPlayer={this.state.currentPlayerId === player.id}
                                                   player={player}
                                                   lastDiceRoll={this.state.lastDiceRoll}
                                                   rollDice={this.rollDice}
