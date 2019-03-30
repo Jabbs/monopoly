@@ -1,5 +1,45 @@
-.App {
+.monopoly-app {
+  padding: 40px;
+}
+
+.hide {
+  display: none;
+}
+
+.game-setup {
   text-align: center;
+}
+
+.spaces-container {
+  width: 100%;
+  height: 300px;
+}
+
+.player-info-container {
+  width: 100%;
+  height: 500px;
+}
+
+.space {
+  float: right;
+  text-align: center;
+  border: 2px solid gray;
+  width: 80px;
+  height: 200px;
+  padding: 20px;
+}
+
+.player-info {
+  float: left;
+  text-align: center;
+  border: 2px solid black;
+  width: 200px;
+  height: 200px;
+  padding: 20px;
+}
+
+.player-info.active {
+  border-color: red;
 }
 
 .error {
