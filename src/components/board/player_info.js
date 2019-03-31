@@ -17,7 +17,7 @@ export default class PlayerInfo extends Component {
       <div className={playerInfoClass}>
         <img height="40" src={require(`../../icons/${this.props.player.icon}.jpeg`)} alt="" />
         <h3>{this.props.player.name}</h3>
-        <h5>Wallet: ${this.props.player.wallet.reduce((total, num) => total + num)}</h5>
+        <h5>Wallet: ${this.props.player.wallet}</h5>
         {this.renderDiceSection()}
       </div>
     );

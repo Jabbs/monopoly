@@ -1,15 +1,15 @@
 import React from 'react';
 
-export default ({ spaceId, ownerPlayer }) => {
+export default ({ spaceId, ownerPlayer, price }) => {
   const owner = ownerPlayer(spaceId);
 
   if(owner) {
     return(
       <div>
-        Owned by: {owner.name}
+        Owner: {owner.name}
       </div>
     );
   } else {
-    return null;
+    return price ? `$${price}` : "";
   }
 }

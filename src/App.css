@@ -29,6 +29,14 @@
   padding: 20px;
 }
 
+.player-icons {
+  padding-top: 10px;
+}
+
+.space-actions {
+  padding-top: 5px;
+}
+
 .player-info {
   float: left;
   text-align: center;

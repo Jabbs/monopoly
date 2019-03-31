@@ -3,6 +3,7 @@ import GameSetup from './game_setup.js'
 import PlayerInfo from './player_info.js'
 import Space from './space.js'
 let _ = require('underscore');
+const boardSpaceCount = 10;
 
 class Board extends Component {
   constructor(props) {
@@ -10,7 +11,7 @@ class Board extends Component {
     this.state = {
       gameStarted: false,
       playerImageNames: ["car", "dog", "hat", "iron", "ship", "shoe", "thimble", "wheelbarrow"],
-      players: [], // { id: 1, icon: "car", name: "Peter", wallet: [500,100,20,20,10,10,5,5,1,1] }
+      players: [], // { id: 1, icon: "car", name: "Peter", wallet: 1401, spaceId: 2 }
       turns: [], // { playerId: 1, diceRoll: 4, spaceId: 8, transactionIds: [12, 13] }
       transactions: [], // { sellerId: 3, buyerId: 2, spaceId: 2, amount: 100 };
       lastDiceRoll: null,
@@ -21,6 +22,7 @@ class Board extends Component {
     this.rollDice  = this.rollDice.bind(this);
     this.currentPlayer = this.currentPlayer.bind(this);
     this.buyProperty = this.buyProperty.bind(this);
+    this.updateCurrentPlayer = this.updateCurrentPlayer.bind(this);
   }
 
   // bypasses the game_setup for now
@@ -33,15 +35,26 @@ class Board extends Component {
     this.startGame();
   }
 
-  initialPlayerWallet() {
-    return [500,500,100,100,50,50,20,20,20,20,20,20,10,10,10,10,10,5,5,5,5,5,1,1,1,1,1];
+  createTransaction(sellerId, buyerId, spaceId, amount) {
+    let transactions = this.state.transactions;
+    const newTransaction = { sellerId: sellerId, buyerId: buyerId, spaceId: spaceId, amount: amount };
+    transactions.push(newTransaction);
+    this.setState({transactions: transactions});
   }
 
   buyProperty(spaceId, price) {
-    let transactions = this.state.transactions;
-    const newTransaction = { sellerId: null, buyerId: this.state.currentPlayerId, spaceId: spaceId, amount: price };
-    transactions.push(newTransaction);
-    this.setState({transactions: transactions});
+    const currentPlayer   = this.currentPlayer();
+    const newWalletAmount = currentPlayer.wallet - price;
+    this.updateCurrentPlayer("wallet", newWalletAmount);
+    this.createTransaction(null, this.state.currentPlayerId, spaceId, price)
+  }
+
+  updateCurrentPlayer(key, value) {
+    let currentPlayer = this.currentPlayer();
+    let newPlayers = _.without(this.state.players, currentPlayer);
+    currentPlayer[key] = value;
+    newPlayers.push(currentPlayer);
+    this.setState({players: _.sortBy(newPlayers, (p) => p.id)});
   }
 
   addPlayer(id, icon, playerName) {
@@ -50,7 +63,7 @@ class Board extends Component {
       id: id,
       icon: icon,
       name: playerName,
-      wallet: this.initialPlayerWallet(),
+      wallet: 1500,
       spaceId: 1,
     };
     newPlayers.push(player);
@@ -69,20 +82,12 @@ class Board extends Component {
 
   changeSpaceForCurrentPlayer(diceNumber) {
     const newSpaceId = this.getNewSpaceId(diceNumber);
-    let currentPlayer = this.currentPlayer();
-    let newPlayers = _.without(this.state.players, currentPlayer);
-    currentPlayer.spaceId = newSpaceId;
-    newPlayers.push(currentPlayer);
-    this.setState({players: _.sortBy(newPlayers, (p) => p.id)});
+    this.updateCurrentPlayer("spaceId", newSpaceId);
   }
 
   getNewSpaceId(diceNumber) {
     let newSpaceId = this.currentPlayer().spaceId + diceNumber;
-    if(newSpaceId > 10) {
-      return newSpaceId - 10;
-    } else {
-      return newSpaceId;
-    }
+    return newSpaceId > boardSpaceCount ? (newSpaceId - boardSpaceCount) : newSpaceId;
   }
 
   startGame() {

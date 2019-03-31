@@ -4,9 +4,10 @@ export default class SpaceBuyAction extends Component {
   spaceIsBuyable() {
     const currentPlayer         = this.props.currentPlayer();
     const currentPlayerOnSpace  = currentPlayer && this.props.spaceId === currentPlayer.spaceId;
+    const currentPlayerHasEnoughMoney = currentPlayer && currentPlayer.wallet >= this.props.price
     const spaceIsProperty       = this.props.spaceType === "property"
     const spaceIsAvailable      = this.props.propertyAvailable(this.props.spaceId);
-    return currentPlayer && currentPlayerOnSpace && spaceIsProperty && spaceIsAvailable;
+    return currentPlayer && currentPlayerOnSpace && currentPlayerHasEnoughMoney && spaceIsProperty && spaceIsAvailable;
   }
 
   render() {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import SpaceBuyAction from './space_buy_action.js'
-import SpaceOwnerDetails from './space_owner_details.js'
+import SpaceDetails from './space_details.js'
 let _ = require('underscore');
 
 export default class Space extends Component {
@@ -35,12 +35,11 @@ export default class Space extends Component {
         <div className={`space-${this.props.type}`}>
           {this.props.name}
         </div>
-        <div className="price-footer">
-          {this.props.price ? `$${this.props.price}` : ""}
-        </div>
-        <div className="player-icons">
-          {this.renderPlayerIcons()}
-        </div>
+        <SpaceDetails
+          spaceId={this.props.id}
+          ownerPlayer={this.ownerPlayer}
+          price={this.props.price}
+        />
         <div className="space-actions">
           <SpaceBuyAction
             spaceId={this.props.id}
@@ -50,10 +49,9 @@ export default class Space extends Component {
             buyProperty={this.props.buyProperty}
             price={this.props.price}
           />
-          <SpaceOwnerDetails
-            spaceId={this.props.id}
-            ownerPlayer={this.ownerPlayer}
-          />
+        </div>
+        <div className="player-icons">
+          {this.renderPlayerIcons()}
         </div>
       </div>
     );
