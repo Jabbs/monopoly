@@ -6,7 +6,6 @@ import Space                from './space.js'
 
 let _ = require('underscore');
 const boardSpaceCount = 40;
-const rentAmount = 10;
 
 class Board extends Component {
   constructor(props) {
@@ -24,12 +23,14 @@ class Board extends Component {
     };
     this.addPlayer = this.addPlayer.bind(this);
     this.startGame = this.startGame.bind(this);
-    this.takeTurn  = this.takeTurn.bind(this);
+    this.takeTurn = this.takeTurn.bind(this);
     this.currentPlayer = this.currentPlayer.bind(this);
     this.buyProperty = this.buyProperty.bind(this);
     this.updatePlayers = this.updatePlayers.bind(this);
     this.changeCurrentPlayer = this.changeCurrentPlayer.bind(this);
-    this.spaceOwnerPlayer = this.spaceOwnerPlayer.bind(this);
+    this.spaceOwner = this.spaceOwner.bind(this);
+    this.findSpace = this.findSpace.bind(this);
+    this.calculateRent = this.calculateRent.bind(this);
   }
 
   // REMOVE BEFORE DEPLOY - this bypasses the game_setup (for dev)
@@ -90,7 +91,7 @@ class Board extends Component {
     this.setState({players: newPlayers});
   }
 
-  spaceOwnerPlayer(spaceId) {
+  spaceOwner(spaceId) {
     const lastTransaction = _.last(_.filter(this.state.transactions, (t) => t.spaceId === spaceId));
     if(lastTransaction) {
       return  this.findPlayer(lastTransaction.buyerId);
@@ -99,19 +100,46 @@ class Board extends Component {
     }
   }
 
+  calculateRent(space, currentPlayer) {
+    if(space.propertyGroup === "railroad") {
+      let numberOwned = 0;
+      SpaceInfo.forEach((s) => {
+        const railroadOwnedByCurrentPlayer = s.propertyGroup === "railroad" && this.spaceOwner(s.id) === currentPlayer.id;
+        if(railroadOwnedByCurrentPlayer) numberOwned += 1;
+      })
+      return numberOwned * 25;
+    } else if(space.propertyGroup === "utility") {
+      let numberOwned = 0;
+      SpaceInfo.forEach((s) => {
+        const utilityOwnedByCurrentPlayer = s.propertyGroup === "utility" && this.spaceOwner(s.id) === currentPlayer.id;
+        if(utilityOwnedByCurrentPlayer) numberOwned += 1;
+      })
+      const multiplier = numberOwned === 2 ? 10 : 4;
+      return multiplier * this.state.lastDiceRoll;
+    } else {
+      return space.rent;
+    }
+  }
+
   takeTurn() {
     const diceRoll = Math.floor(Math.random()*12)+1;
     const newSpaceId = this.getNewSpaceId(diceRoll);
-    const spaceOwnerPlayer = this.spaceOwnerPlayer(newSpaceId);
+    const newSpace = this.findSpace(newSpaceId);
+    const spaceOwner = this.spaceOwner(newSpaceId);
     const currentPlayer = this.currentPlayer();
+
     let playerUpdates = [{id: currentPlayer.id, key: "spaceId", value: newSpaceId}];
     // pay rent if property owned by someone other than currentPlayer
-    if(spaceOwnerPlayer && spaceOwnerPlayer.id !== currentPlayer.id) {
-      playerUpdates.push({id: spaceOwnerPlayer.id, key: "wallet", value: spaceOwnerPlayer.wallet + rentAmount})
-      playerUpdates.push({id: currentPlayer.id, key: "wallet", value: currentPlayer.wallet - rentAmount})
+    if(spaceOwner && spaceOwner.id !== currentPlayer.id && newSpace.type === "property") {
+      playerUpdates.push({id: spaceOwner.id, key: "wallet", value: spaceOwner.wallet + this.calculateRent(newSpace)})
+      playerUpdates.push({id: currentPlayer.id, key: "wallet", value: currentPlayer.wallet - this.calculateRent(newSpace)})
     }
     this.updatePlayers(playerUpdates);
     this.setState({lastDiceRoll: diceRoll});
+  }
+
+  findSpace(spaceId) {
+    return _.find(SpaceInfo, (s) => s.id === spaceId);
   }
 
   currentPlayer() {
