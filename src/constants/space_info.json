@@ -1,0 +1,23 @@
+[
+  { "id": 21, "name": "Free Parking", "type": "free", "propertyGroup": null, "price": null, "rent": null },
+  { "id": 20, "name": "New York Avenue", "type": "property", "propertyGroup": "orange", "price": 200, "rent": 16 },
+  { "id": 19, "name": "Tennessee Avenue", "type": "property", "propertyGroup": "orange", "price": 180, "rent": 14 },
+  { "id": 18, "name": "Community Chest", "type": "communityChest", "propertyGroup": null, "price": null, "rent": null },
+  { "id": 17, "name": "St. James Place", "type": "property", "propertyGroup": "orange", "price": 180, "rent": 14 },
+  { "id": 16, "name": "Pennsylvania Railroad", "type": "property", "propertyGroup": "railroad", "price": 200, "rent": "custom" },
+  { "id": 15, "name": "Virginia Avenue", "type": "property", "propertyGroup": "purple", "price": 160, "rent": 12 },
+  { "id": 14, "name": "States Avenue", "type": "property", "propertyGroup": "purple", "price": 140, "rent": 10 },
+  { "id": 13, "name": "Electric Company", "type": "property", "propertyGroup": "utility", "price": 150, "rent": "custom" },
+  { "id": 12, "name": "St. Charles Place", "type": "property", "propertyGroup": "purple", "price": 140, "rent": 10 },
+  { "id": 11, "name": "Go To Jail", "type": "jail", "propertyGroup": null, "price": null, "rent": null },
+  { "id": 10, "name": "Connecticut Avenue", "type": "property", "propertyGroup": "lightblue", "price": 120, "rent": 8 },
+  { "id": 9, "name": "Vermont Avenue", "type": "property", "propertyGroup": "lightblue", "price": 100, "rent": 6 },
+  { "id": 8, "name": "Chance", "type": "chance", "propertyGroup": null, "price": null, "rent": null },
+  { "id": 7, "name": "Oriental Avenue", "type": "property", "propertyGroup": "lightblue", "price": 100, "rent": 6 },
+  { "id": 6, "name": "Reading Railroad", "type": "property", "propertyGroup": "railroad", "price": 200, "rent": "custom" },
+  { "id": 5, "name": "Income Tax", "type": "incomeTax", "propertyGroup": null, "price": null, "rent": null },
+  { "id": 4, "name": "Baltic Avenue", "type": "property", "propertyGroup": "purple", "price": 60, "rent": 4 },
+  { "id": 3, "name": "Community Chest", "type": "communityChest", "propertyGroup": null, "price": null, "rent": null },
+  { "id": 2, "name": "Mediterranean Avenue", "type": "property", "propertyGroup": "purple", "price": 60, "rent": 2 },
+  { "id": 1, "name": "Pass Go!", "type": "passGo", "propertyGroup": null, "price": null, "rent": null }
+]
