@@ -6,7 +6,7 @@ export default class PlayerInfo extends Component {
     if(this.props.isCurrentPlayer && this.props.lastDiceRoll) {
       return(<div>YOU ROLLED A {this.props.lastDiceRoll}!</div>);
     } else if(this.props.isCurrentPlayer) {
-      return(<button onClick={() => this.props.rollDice()}>Roll Dice</button>);
+      return(<button onClick={() => this.props.takeTurn()}>Roll Dice</button>);
     } else {
       return null;
     }

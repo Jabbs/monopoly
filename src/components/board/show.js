@@ -3,7 +3,8 @@ import GameSetup from './game_setup.js'
 import PlayerInfo from './player_info.js'
 import Space from './space.js'
 let _ = require('underscore');
-const boardSpaceCount = 10;
+const boardSpaceCount = 21;
+const rentAmount = 10;
 
 class Board extends Component {
   constructor(props) {
@@ -19,11 +20,12 @@ class Board extends Component {
     };
     this.addPlayer = this.addPlayer.bind(this);
     this.startGame = this.startGame.bind(this);
-    this.rollDice  = this.rollDice.bind(this);
+    this.takeTurn  = this.takeTurn.bind(this);
     this.currentPlayer = this.currentPlayer.bind(this);
     this.buyProperty = this.buyProperty.bind(this);
-    this.updateCurrentPlayer = this.updateCurrentPlayer.bind(this);
+    this.updatePlayers = this.updatePlayers.bind(this);
     this.changeCurrentPlayer = this.changeCurrentPlayer.bind(this);
+    this.spaceOwnerPlayer = this.spaceOwnerPlayer.bind(this);
   }
 
   // bypasses the game_setup for now
@@ -55,15 +57,19 @@ class Board extends Component {
   buyProperty(spaceId, price) {
     const currentPlayer   = this.currentPlayer();
     const newWalletAmount = currentPlayer.wallet - price;
-    this.updateCurrentPlayer("wallet", newWalletAmount);
+    this.updatePlayers([{id: this.currentPlayer().id, key: "wallet", value: newWalletAmount}]);
     this.createTransaction(null, this.state.currentPlayerId, spaceId, price)
   }
 
-  updateCurrentPlayer(key, value) {
-    let currentPlayer = this.currentPlayer();
-    let newPlayers = _.without(this.state.players, currentPlayer);
-    currentPlayer[key] = value;
-    newPlayers.push(currentPlayer);
+  // players => [{id: 2, key: "spaceId", value: 2}, {id: 1, key: "wallet", value: 123}]
+  updatePlayers(players) {
+    let newPlayers = this.state.players;
+    players.forEach((player) => {
+      let p = this.findPlayer(player.id);
+      newPlayers = _.without(newPlayers, p);
+      p[player.key] = player.value;
+      newPlayers.push(p);
+    });
     this.setState({players: _.sortBy(newPlayers, (p) => p.id)});
   }
 
@@ -80,19 +86,36 @@ class Board extends Component {
     this.setState({players: newPlayers});
   }
 
-  rollDice() {
-    const diceNumber = Math.floor(Math.random()*6)+1;
-    this.changeSpaceForCurrentPlayer(diceNumber)
-    this.setState({lastDiceRoll: diceNumber});
+  spaceOwnerPlayer(spaceId) {
+    const lastTransaction = _.last(_.filter(this.state.transactions, (t) => t.spaceId === spaceId));
+    if(lastTransaction) {
+      return  this.findPlayer(lastTransaction.buyerId);
+    } else {
+      return null;
+    }
+  }
+
+  takeTurn() {
+    const diceRoll = Math.floor(Math.random()*12)+1;
+    const newSpaceId = this.getNewSpaceId(diceRoll);
+    const spaceOwnerPlayer = this.spaceOwnerPlayer(newSpaceId);
+    const currentPlayer = this.currentPlayer();
+    let playerUpdates = [{id: currentPlayer.id, key: "spaceId", value: newSpaceId}];
+    // pay rent if property owned by someone other than currentPlayer
+    if(spaceOwnerPlayer && spaceOwnerPlayer.id !== currentPlayer.id) {
+      playerUpdates.push({id: spaceOwnerPlayer.id, key: "wallet", value: spaceOwnerPlayer.wallet + rentAmount})
+      playerUpdates.push({id: currentPlayer.id, key: "wallet", value: currentPlayer.wallet - rentAmount})
+    }
+    this.updatePlayers(playerUpdates);
+    this.setState({lastDiceRoll: diceRoll});
   }
 
   currentPlayer() {
     return _.find(this.state.players, (p) => p.id === this.state.currentPlayerId);
   }
 
-  changeSpaceForCurrentPlayer(diceNumber) {
-    const newSpaceId = this.getNewSpaceId(diceNumber);
-    this.updateCurrentPlayer("spaceId", newSpaceId);
+  findPlayer(playerId) {
+    return _.find(this.state.players, (p) => p.id === playerId);
   }
 
   getNewSpaceId(diceNumber) {
@@ -119,6 +142,28 @@ class Board extends Component {
         <div className={this.state.gameStarted ? '' : 'hide'}>
           <h2>Board</h2>
           <div className="spaces-container">
+            <Space id={21} name="Free Parking" type="jail" players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={20} name="New York Avenue" type="property" propertyGroup="orange" price={200} players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={19} name="Tennessee Avenue" type="property" propertyGroup="orange" price={180} players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={18} name="Community Chest" type="communityChest" players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={17} name="St. James Place" type="property" propertyGroup="orange" price={180} players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={16} name="Pennsylvania Railroad" type="property" propertyGroup="railroad" price={200} players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={15} name="Virginia Avenue" type="property" propertyGroup="purple" price={160} players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={14} name="States Avenue" type="property" propertyGroup="purple" price={140} players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={13} name="Electric Company" type="utility" players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} price={150} />
+            <Space id={12} name="St. Charles Place" type="property" propertyGroup="purple" price={140} players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={11} name="Go to Jail" type="jail" players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
             <Space id={10} name="Connecticut Avenue" type="property" propertyGroup="lightblue" price={120} players={this.state.players} currentPlayer={this.currentPlayer}
               transactions={this.state.transactions} buyProperty={this.buyProperty} />
             <Space id={9} name="Vermont Avenue" type="property" propertyGroup="lightblue" price={100} players={this.state.players} currentPlayer={this.currentPlayer}
@@ -147,7 +192,7 @@ class Board extends Component {
                                                   isCurrentPlayer={this.state.currentPlayerId === player.id}
                                                   player={player}
                                                   lastDiceRoll={this.state.lastDiceRoll}
-                                                  rollDice={this.rollDice}
+                                                  takeTurn={this.takeTurn}
                                                   lastDiceRoll={this.state.lastDiceRoll}
                                                   changeCurrentPlayer={this.changeCurrentPlayer}
                                                 />)}
