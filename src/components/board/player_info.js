@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ChangeCurrentPlayerAction from './change_current_player_action.js';
 
 export default class PlayerInfo extends Component {
   renderDiceSection() {
@@ -19,6 +20,11 @@ export default class PlayerInfo extends Component {
         <h3>{this.props.player.name}</h3>
         <h5>Wallet: ${this.props.player.wallet}</h5>
         {this.renderDiceSection()}
+        <ChangeCurrentPlayerAction
+          changeCurrentPlayer={this.props.changeCurrentPlayer}
+          isCurrentPlayer={this.props.isCurrentPlayer}
+          lastDiceRoll={this.props.lastDiceRoll}
+        />
       </div>
     );
   }

@@ -23,6 +23,7 @@ class Board extends Component {
     this.currentPlayer = this.currentPlayer.bind(this);
     this.buyProperty = this.buyProperty.bind(this);
     this.updateCurrentPlayer = this.updateCurrentPlayer.bind(this);
+    this.changeCurrentPlayer = this.changeCurrentPlayer.bind(this);
   }
 
   // bypasses the game_setup for now
@@ -33,6 +34,15 @@ class Board extends Component {
     this.addPlayer(4, "ship", "Suzy");
     this.addPlayer(5, "hat", "Bobo");
     this.startGame();
+  }
+
+  changeCurrentPlayer() {
+    const sortedPlayerIds = this.state.players.map((p) => p.id).sort();
+    if(this.state.currentPlayerId === _.last(sortedPlayerIds)) {
+      this.setState({currentPlayerId: 1, lastDiceRoll: null});
+    } else {
+      this.setState({currentPlayerId: this.state.currentPlayerId+1, lastDiceRoll: null});
+    }
   }
 
   createTransaction(sellerId, buyerId, spaceId, amount) {
@@ -109,16 +119,26 @@ class Board extends Component {
         <div className={this.state.gameStarted ? '' : 'hide'}>
           <h2>Board</h2>
           <div className="spaces-container">
-            <Space id={10} name="Connecticut Avenue" type="property" propertyGroup="lightblue" price={120} players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
-            <Space id={9} name="Vermont Avenue" type="property" propertyGroup="lightblue" price={100} players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
-            <Space id={8} name="Chance" type="chance" players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
-            <Space id={7} name="Oriental Avenue" type="property" propertyGroup="lightblue" price={100} players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
-            <Space id={6} name="Reading Railroad" type="property" propertyGroup="railroad" price={200} players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
-            <Space id={5} name="Income Tax" type="incomeTax" players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
-            <Space id={4} name="Baltic Avenue" type="property" propertyGroup="purple" price={60} players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
-            <Space id={3} name="Community Chest" type="communityChest" players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
-            <Space id={2} name="Mediterranean Avenue" type="property" propertyGroup="purple" price={60} players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
-            <Space id={1} name="Pass Go!" type="go" players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={10} name="Connecticut Avenue" type="property" propertyGroup="lightblue" price={120} players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={9} name="Vermont Avenue" type="property" propertyGroup="lightblue" price={100} players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={8} name="Chance" type="chance" players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={7} name="Oriental Avenue" type="property" propertyGroup="lightblue" price={100} players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={6} name="Reading Railroad" type="property" propertyGroup="railroad" price={200} players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={5} name="Income Tax" type="incomeTax" players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={4} name="Baltic Avenue" type="property" propertyGroup="purple" price={60} players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={3} name="Community Chest" type="communityChest" players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={2} name="Mediterranean Avenue" type="property" propertyGroup="purple" price={60} players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
+            <Space id={1} name="Pass Go!" type="go" players={this.state.players} currentPlayer={this.currentPlayer}
+              transactions={this.state.transactions} buyProperty={this.buyProperty} />
           </div>
           <h2>Players</h2>
           <div className="player-info-container">
@@ -128,6 +148,8 @@ class Board extends Component {
                                                   player={player}
                                                   lastDiceRoll={this.state.lastDiceRoll}
                                                   rollDice={this.rollDice}
+                                                  lastDiceRoll={this.state.lastDiceRoll}
+                                                  changeCurrentPlayer={this.changeCurrentPlayer}
                                                 />)}
           </div>
         </div>
