@@ -47,7 +47,7 @@ export default class GameSetup extends Component {
   renderPlayerSetup() {
     const playerSetup = [];
     this.props.playerImageNames.forEach((imageName) => {
-      playerSetup.push(<img key={`${imageName}-img`} height="40" src={require(`../../icons/${imageName}.jpeg`)} alt="" />);
+      playerSetup.push(<img key={`${imageName}-img`} height="40" src={require(`../icons/${imageName}.jpeg`)} alt="" />);
       playerSetup.push(<input key={`${imageName}-input`} ref={imageName} type="text"></input>);
       playerSetup.push(<br key={`${imageName}-br`}></br>);
     });

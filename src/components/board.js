@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import SpaceInfo from '../../constants/space_info.json';
-import GameSetup from './game_setup.js'
-import PlayerInfo from './player_info.js'
-import Space from './space.js'
+import SpaceInfo            from '../constants/space_info.json';
+import GameSetup            from './game_setup.js'
+import PlayerInfo           from './player_info.js'
+import Space                from './space.js'
+
 let _ = require('underscore');
-const boardSpaceCount = 21;
+const boardSpaceCount = 40;
 const rentAmount = 10;
 
 class Board extends Component {
@@ -31,7 +32,7 @@ class Board extends Component {
     this.spaceOwnerPlayer = this.spaceOwnerPlayer.bind(this);
   }
 
-  // bypasses the game_setup for now
+  // REMOVE BEFORE DEPLOY - this bypasses the game_setup (for dev)
   componentDidMount() {
     this.addPlayer(1, "car", "Peter");
     this.addPlayer(2, "thimble", "Brianna");
@@ -145,18 +146,37 @@ class Board extends Component {
         <div className={this.state.gameStarted ? '' : 'hide'}>
           <h2>Board</h2>
           <div className="spaces-container">
-            {SpaceInfo.map((s) => <Space key={s.id} id={s.id} name={s.name} type={s.type} players={this.state.players} currentPlayer={this.currentPlayer} transactions={this.state.transactions} buyProperty={this.buyProperty} />)}
+            {SpaceInfo.map((s) => {
+              return(
+                <Space
+                  key={s.id}
+                  id={s.id}
+                  name={s.name}
+                  type={s.type}
+                  propertyGroup={s.propertyGroup}
+                  price={s.price}
+                  players={this.state.players}
+                  currentPlayer={this.currentPlayer}
+                  transactions={this.state.transactions}
+                  buyProperty={this.buyProperty}
+                />
+              );
+            })}
           </div>
           <h2>Players</h2>
           <div className="player-info-container">
-            {this.state.players.map((player) => <PlayerInfo
-                                                  key={player.id}
-                                                  isCurrentPlayer={this.state.currentPlayerId === player.id}
-                                                  player={player}
-                                                  lastDiceRoll={this.state.lastDiceRoll}
-                                                  takeTurn={this.takeTurn}
-                                                  changeCurrentPlayer={this.changeCurrentPlayer}
-                                                />)}
+            {this.state.players.map((player) => {
+              return(
+                <PlayerInfo
+                  key={player.id}
+                  isCurrentPlayer={this.state.currentPlayerId === player.id}
+                  player={player}
+                  lastDiceRoll={this.state.lastDiceRoll}
+                  takeTurn={this.takeTurn}
+                  changeCurrentPlayer={this.changeCurrentPlayer}
+                />
+              );
+            })}
           </div>
         </div>
       </div>

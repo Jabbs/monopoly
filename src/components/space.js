@@ -13,7 +13,7 @@ export default class Space extends Component {
   renderPlayerIcons() {
     return this.props.players.map((player) => {
       if(player.spaceId === this.props.id) {
-        return <img key={player.icon} height="20" src={require(`../../icons/${player.icon}.jpeg`)} alt="" />;
+        return <img key={player.icon} height="20" src={require(`../icons/${player.icon}.jpeg`)} alt="" />;
       } else {
         return null;
       }
